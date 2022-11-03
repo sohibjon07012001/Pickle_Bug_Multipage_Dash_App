@@ -1,7 +1,6 @@
 import dash
 from dash import Input, Output, dcc, html, dash_table
 import pandas as pd
-from pycaret.classification import *
 import dash_bootstrap_components as dbc
 
 
