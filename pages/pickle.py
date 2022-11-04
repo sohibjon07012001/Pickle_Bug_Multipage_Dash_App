@@ -1,17 +1,14 @@
-import re
-from dash import Dash, dcc, html, callback, ctx
+from dash import Dash, dcc, html, callback, ctx, Input, Output
 from dash.exceptions import PreventUpdate
-from dash.dependencies import Input, Output
-import datetime
-from flask_caching import Cache
-import os
+
 import pandas as pd
 import dash
-import uuid
-from dash_iconify import DashIconify
+
+
 import sklearn.datasets
 import sklearn.metrics
 import autosklearn.classification
+from sklearn import tree
 import pandas as pd
 import pickle
 from explainerdashboard.datasets import titanic_survive
@@ -54,7 +51,7 @@ layout = html.Div([
     html.Hr(),
     html.Center(dmc.Button("Run Model", id='run_model')),
     html.Hr(),
-    dcc.Loading(html.Div(id='test'))
+    html.Center(dcc.Loading(html.Div(id='test')))
 ])
 
 @callback(
@@ -82,10 +79,20 @@ def show_result(n):
             per_run_time_limit=30,
             scoring_functions=[balanced_accuracy, precision, recall, f1, error_rate],
         )
-        cls.fit(X_train, y_train, X_test, y_test)
+        cls.fit(X_train, y_train)
+        print(cls.leaderboard())
+        
+        # from sklearn.datasets import load_iris
+        # from sklearn import tree
+        # iris = load_iris()
+        # X, y = iris.data, iris.target
+        # clf = tree.DecisionTreeClassifier()
+        # clf = clf.fit(X_train, y_train)
+        # print(clf.predict(X_test))
         with open('experiment_name.pkl', 'wb') as f:
                 pickle.dump(cls, f)
-        return 'Done'
+
+        return html.Div('Done'), dash.no_update
     else:
         raise PreventUpdate
 
